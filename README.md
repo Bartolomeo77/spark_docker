@@ -48,19 +48,19 @@ Just validate your cluster accesing the spark UI on each worker & master URL.
 
 http://localhost:9090/
 
-![alt text](docs/spark-master.png "Spark master UI")
+
 
 ### Spark Worker 1
 
 http://localhost:9091/
 
-![alt text](docs/spark-worker-1.png "Spark worker 1 UI")
+
 
 ### Spark Worker 2
 
 http://localhost:9092/
 
-![alt text](docs/spark-worker-2.png "Spark worker 2 UI")
+
 
 
 # Resource Allocation 
@@ -102,6 +102,10 @@ latitude|longitude|time_received|vehicle_id|distance_along_trip|inferred_directi
 40.668602|-73.986697|2014-08-01 04:00:01|469|4135.34710710144|1|IN_PROGRESS|MTA NYCT_B63|MTA NYCT_JG_C4-Weekday-141500_B63_123|2.63183804205619|MTA_305423|2014-08-01 04:00:00|2014-08-01
 
 To submit the app connect to one of the workers or the master and execute:
+```sh
+docker exec -it prueba4-spark-master-1 /bin/bash
+root@959b7c958f23:/opt/spark#
+```
 
 ```sh
 /opt/spark/bin/spark-submit --master spark://spark-master:7077 \
@@ -110,6 +114,19 @@ To submit the app connect to one of the workers or the master and execute:
 --executor-memory 1G \
 /opt/spark-apps/main.py
 ```
+
+
+Postgres:
+```sh
+docker exec -it prueba4-demo-dbin/bash
+```
+```sh
+postgres=# psql -U postgres
+postgres-# \c movilens
+postgres-# SELECT * FROM movilens;
+
+```
+
 
 ![alt text](./articles/images/pyspark-demo.png "Spark UI with pyspark program running")
 
