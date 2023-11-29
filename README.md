@@ -86,16 +86,29 @@ data|/opt/spark-data| Se utiliza para que los datos de su aplicación estén dis
 
 ## NY Bus Stops Data [Pyspark]
 
-This programs just loads archived data from [MTA Bus Time](http://web.mta.info/developers/MTA-Bus-Time-historical-data.html) and apply basic filters using spark sql, the result are persisted into a postgresql table.
+Este programa simplemente carga datos archivados de [Movilens](https://grouplens.org/datasets/movielens/) y aplicar filtros básicos usando spark sql, el resultado se conserva en una tabla de postgresql.
 
-The loaded table will contain the following structure:
+La tabla cargada contendrá la siguiente estructura:
 
 userid|movieid|ratingid|stamtimeid
 ---|---|---|---
 196|242|3|881250949
 			
+Primero creamos la base de datos en postgres
+Postgres:
+```sh
+docker exec -it spark_docker_demo-database_1 /bin/bash
+```
+```sh
+postgres=# psql -U postgres
+postgres=# CREATE DATABASE movilens;
+postgres-# \c movilens
+postgres-# SELECT * FROM movilens;
+```
 
-To submit the app connect to one of the workers or the master and execute:
+
+Para enviar la aplicación, conéctese a uno de los trabajadores o al maestro y ejecute:
+
 ```sh
 docker exec -it spark_docker_spark-master_1 /bin/bash
 root@959b7c958f23:/opt/spark#
@@ -108,27 +121,23 @@ root@959b7c958f23:/opt/spark#
 --executor-memory 1G \
 /opt/spark-apps/main.py
 ```
+Verificamos que los datos estan ahi es postgres
 
-
-Postgres:
 ```sh
-docker exec -it prueba4-demo-dbin/bash
+docker exec -it spark_docker_demo-database_1 /bin/bash
 ```
 ```sh
 postgres=# psql -U postgres
 postgres-# \c movilens
 postgres-# SELECT * FROM movilens;
-
 ```
 
 
-![alt text](./articles/images/pyspark-demo.png "Spark UI with pyspark program running")
-
 ## MTA Bus Analytics[Scala]
 
-This program takes the archived data from [MTA Bus Time](http://web.mta.info/developers/MTA-Bus-Time-historical-data.html) and make some aggregations on it, the calculated results are persisted on postgresql tables.
+Este programa toma los datos archivados de [Movilens](https://grouplens.org/datasets/movielens/) y realizar algunas agregaciones, los resultados calculados se conservan en las tablas de PostgreSQL.
 
-Each persisted table correspond to a particullar aggregation:
+Cada tabla persistente corresponde a una agregación particular:
 
 Table|Aggregation
 ---|---
@@ -158,25 +167,25 @@ You will notice on the spark-ui a driver program and executor program running(In
 ![alt text](./articles/images/stats-app.png "Spark UI with scala program running")
 
 
-# Summary
+# Resumen
 
-* We compiled the necessary docker image to run spark master and worker containers.
+* Compilamos la imagen de Docker necesaria para ejecutar los contenedores Spark Master y Worker.
 
-* We created a spark standalone cluster using 2 worker nodes and 1 master node using docker && docker-compose.
+* Creamos un clúster independiente de Spark usando 2 nodos trabajadores y 1 nodo maestro usando Docker && Docker-compose.
 
-* Copied the resources necessary to run demo applications.
+* Copié los recursos necesarios para ejecutar aplicaciones de demostración.
 
-* We ran a distributed application at home(just need enough cpu cores and RAM to do so).
+* Ejecutamos una aplicación distribuida en casa (solo necesitamos suficientes núcleos de CPU y RAM para hacerlo).
 
-# Why a standalone cluster?
+# ¿Por qué un clúster independiente?
 
-* This is intended to be used for test purposes, basically a way of running distributed spark apps on your laptop or desktop.
+* Esto está diseñado para usarse con fines de prueba, básicamente una forma de ejecutar aplicaciones Spark distribuidas en su computadora portátil o de escritorio.
 
-* This will be useful to use CI/CD pipelines for your spark apps(A really difficult and hot topic)
+* Esto será útil para usar canalizaciones de CI/CD para sus aplicaciones Spark (un tema realmente difícil y candente)
 
-# Steps to connect and use a pyspark shell interactively
+# Pasos para conectar y usar un shell pyspark de forma interactiva
 
-* Follow the steps to run the docker-compose file. You can scale this down if needed to 1 worker. 
+* Siga los pasos para ejecutar el archivo docker-compose. Puede reducir esto si es necesario a 1 trabajador.
 
 ```sh
 docker-compose up --scale spark-worker=1
@@ -187,8 +196,8 @@ pip3 install pyspark
 pyspark
 ```
 
-# What's left to do?
+# ¿Qué queda por hacer?
 
-* Right now to run applications in deploy-mode cluster is necessary to specify arbitrary driver port.
+* En este momento, para ejecutar aplicaciones en el clúster en modo de implementación, es necesario especificar un puerto de controlador arbitrario.
 
-* The spark submit entry in the start-spark.sh is unimplemented, the submit used in the demos can be triggered from any worker
+* La entrada de envío de Spark en start-spark.sh no está implementada; el envío utilizado en las demostraciones puede activarse desde cualquier trabajador.
