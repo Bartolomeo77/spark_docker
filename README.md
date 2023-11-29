@@ -1,12 +1,12 @@
 # spark_docker
 
-# Spark Cluster with Docker & docker-compose(2021 ver.)
+# Spark Cluster with Docker & docker-compose
 
 # General
 
-A simple spark standalone cluster for your testing environment purposses. A *docker-compose up* away from you solution for your spark development environment.
+Un clúster independiente de Spark simple para los fines de su entorno de pruebas. Una solución *docker-compose up* alejada de usted para su entorno de desarrollo Spark.
 
-The Docker compose will create the following containers:
+Docker Compose creará los siguientes contenedores:
 
 container|Exposed ports
 ---|---
@@ -17,7 +17,7 @@ demo-database|5432
 
 # Installation
 
-The following steps will make you run your spark cluster's containers.
+Los siguientes pasos le permitirán ejecutar los spark cluster's containers.
 
 ## Pre requisites
 
@@ -26,7 +26,9 @@ The following steps will make you run your spark cluster's containers.
 * Docker compose  installed
 
 ## Build the image
-
+```sh
+cd spark_docker
+```
 
 ```sh
 docker build -t cluster-apache-spark:3.0.2 .
@@ -34,7 +36,7 @@ docker build -t cluster-apache-spark:3.0.2 .
 
 ## Run the docker-compose
 
-The final step to create your test cluster will be to run the compose file:
+El último paso para crear su clúster de prueba será ejecutar compose file:
 
 ```sh
 docker-compose up -d
@@ -42,54 +44,45 @@ docker-compose up -d
 
 ## Validate your cluster
 
-Just validate your cluster accesing the spark UI on each worker & master URL.
+valide su clúster accediendo a la interfaz de usuario de Spark en cada URL maestra y de trabajador.
 
 ### Spark Master
 
 http://localhost:9090/
 
-
-
 ### Spark Worker 1
 
 http://localhost:9091/
-
-
 
 ### Spark Worker 2
 
 http://localhost:9092/
 
 
-
-
 # Resource Allocation 
 
-This cluster is shipped with three workers and one spark master, each of these has a particular set of resource allocation(basically RAM & cpu cores allocation).
+Este clúster se envía con 2 trabajadores y un maestro, cada uno de los cuales tiene un conjunto particular de asignación de recursos (básicamente asignación de núcleos de RAM y CPU).
+* La asignación predeterminada de núcleos de CPU para cada Spark Worker es 1 núcleo.
 
-* The default CPU cores allocation for each spark worker is 1 core.
+* La RAM predeterminada para cada spark-worker es 1024 MB.
 
-* The default RAM for each spark-worker is 1024 MB.
+* La asignación de RAM predeterminada para los ejecutores Spark es 256 MB.
 
-* The default RAM allocation for spark executors is 256mb.
+* La asignación de RAM predeterminada para el controlador Spark es 128 MB
 
-* The default RAM allocation for spark driver is 128mb
-
-* If you wish to modify this allocations just edit the env/spark-worker.sh file.
+* Si desea modificar estas asignaciones, simplemente edite el archivo env/spark-worker.sh. o el archivo docker compose file
 
 # Binded Volumes
 
-To make app running easier I've shipped two volume mounts described in the following chart:
+Para facilitar la ejecución de la aplicación, he enviado dos montajes de volumen que se describen en el siguiente cuadro:
 
 Host Mount|Container Mount|Purposse
 ---|---|---
-apps|/opt/spark-apps|Used to make available your app's jars on all workers & master
-data|/opt/spark-data| Used to make available your app's data on all workers & master
+apps|/opt/spark-apps| Se utiliza para que los archivos jar, py de su aplicación estén disponibles para todos los trabajadores y maestros.
+data|/opt/spark-data| Se utiliza para que los datos de su aplicación estén disponibles para todos los trabajadores y maestros
 
-This is basically a dummy DFS created from docker Volumes...(maybe not...)
 
 # Run Sample applications
-
 
 ## NY Bus Stops Data [Pyspark]
 
@@ -97,13 +90,14 @@ This programs just loads archived data from [MTA Bus Time](http://web.mta.info/d
 
 The loaded table will contain the following structure:
 
-latitude|longitude|time_received|vehicle_id|distance_along_trip|inferred_direction_id|inferred_phase|inferred_route_id|inferred_trip_id|next_scheduled_stop_distance|next_scheduled_stop_id|report_hour|report_date
----|---|---|---|---|---|---|---|---|---|---|---|---
-40.668602|-73.986697|2014-08-01 04:00:01|469|4135.34710710144|1|IN_PROGRESS|MTA NYCT_B63|MTA NYCT_JG_C4-Weekday-141500_B63_123|2.63183804205619|MTA_305423|2014-08-01 04:00:00|2014-08-01
+userid|movieid|ratingid|stamtimeid
+---|---|---|---
+196|242|3|881250949
+			
 
 To submit the app connect to one of the workers or the master and execute:
 ```sh
-docker exec -it prueba4-spark-master-1 /bin/bash
+docker exec -it spark_docker_spark-master_1 /bin/bash
 root@959b7c958f23:/opt/spark#
 ```
 
